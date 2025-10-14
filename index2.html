@@ -7,51 +7,8 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="manifest" href="manifest.webmanifest">
-    <style>
-      #mobile-landscape-notification {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        color: white;
-        z-index: 9999;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
-        box-sizing: border-box;
-      }
-      
-      #landscape-button {
-        background: #4CAF50;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        font-size: 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 20px;
-        transition: background 0.3s;
-      }
-      
-      #landscape-button:hover {
-        background: #45a049;
-      }
-    </style>
   </head>
   <body>
-    <!-- Mobile Landscape Notification -->
-    <div id="mobile-landscape-notification">
-      <p>Please rotate your device to landscape mode</p>
-      <button id="landscape-button" title="Enter Landscape Mode">
-        Enter Landscape Mode
-      </button>
-    </div>
-    
     <div id="unity-container">
       <canvas id="unity-canvas" width=1280 height=720 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
@@ -63,55 +20,10 @@
       <div id="unity-warning"> </div>
     </div>
     <script>
-      // Check if device is mobile
-      function isMobileDevice() {
-        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      }
-      
-      // Mobile landscape detection
-      function checkOrientation() {
-        const notification = document.getElementById('mobile-landscape-notification');
-        const isMobile = isMobileDevice();
-        
-        if (isMobile && window.innerHeight > window.innerWidth) {
-          notification.style.display = 'flex';
-        } else {
-          notification.style.display = 'none';
-        }
-      }
-      
-      // Function to request fullscreen (landscape) mode
-      function requestLandscapeMode() {
-        const container = document.getElementById('unity-container');
-        
-        if (container.requestFullscreen) {
-          container.requestFullscreen().then(() => {
-            if (screen.orientation && screen.orientation.lock) {
-              screen.orientation.lock('landscape').catch(() => {});
-            }
-          }).catch(() => {});
-        }
-      }
-      
-      // Event listeners
       window.addEventListener("load", function () {
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker.register("ServiceWorker.js");
         }
-        
-        checkOrientation();
-        window.addEventListener('resize', checkOrientation);
-        window.addEventListener('orientationchange', checkOrientation);
-        
-        if (isMobileDevice()) {
-          document.getElementById('landscape-button').addEventListener('click', requestLandscapeMode);
-        }
-        
-        document.addEventListener('fullscreenchange', function() {
-          if (!document.fullscreenElement) {
-            setTimeout(checkOrientation, 100);
-          }
-        });
       });
 
       var container = document.querySelector("#unity-container");
@@ -120,6 +32,12 @@
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
       var warningBanner = document.querySelector("#unity-warning");
 
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
       function unityShowBanner(msg, type) {
         function updateBannerVisibility() {
           warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
@@ -151,7 +69,15 @@
         showBanner: unityShowBanner,
       };
 
+      // By default Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
         var meta = document.createElement('meta');
         meta.name = 'viewport';
         meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
