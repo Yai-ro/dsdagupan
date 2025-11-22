@@ -5,10 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dominican School, Dagupan</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-blue: #0a2a5e;
+            --dark-blue: #051636;
+            --accent-gold: #ffd700;
+            --text-light: #f0f0f0;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -19,729 +28,524 @@
             height: 100%;
             overflow: hidden;
             font-family: 'Montserrat', sans-serif;
-            color: #333;
-            line-height: 1.6;
+            color: var(--text-light);
+            line-height: 1.7;
+            background-color: var(--dark-blue);
         }
 
-        /* Modern Header Styles */
+        /* --- Animations --- */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+
+        /* Utility class for animations */
+        .animate-on-scroll {
+            opacity: 0; /* Hidden initially */
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .section-active .animate-on-scroll {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger delays */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+
+        /* --- Header --- */
         .main-header {
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 1.5rem 5%;
+            padding: 1.2rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(10, 42, 94, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(5, 22, 54, 0.85); /* Darker, more opaque for readability */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-            transition: transform 0.5s ease; /* Smooth transition for hide/show */
-            }
-
-        .logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: padding 0.3s ease, background 0.3s ease;
         }
 
-        .school-logo-img{
-            height: 60px;
+        .logo-container img {
+            height: 55px;
             width: auto;
-            margin-bottom: 0.3rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
 
+        /* Centering the Navigation */
         .main-nav {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .nav-list {
             display: flex;
-            gap: 2rem;
+            gap: 3rem;
             list-style: none;
+            background: rgba(255,255,255,0.03);
+            padding: 0.5rem 2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .nav-link {
-            color: white;
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
             font-weight: 500;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             position: relative;
-            padding: 0.5rem 0;
-            transition: color 0.3s ease;
+            transition: var(--transition-smooth);
         }
 
         .nav-link::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 0;
             height: 2px;
-            background: #ffd700;
+            background: var(--accent-gold);
             transition: width 0.3s ease;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
-            color: #ffd700;
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-gold);
         }
 
-        .nav-link:hover::after,
-        .nav-link.active::after {
+        .nav-link:hover::after, .nav-link.active::after {
             width: 100%;
-        }
-
-        .play-container {
-            margin-left: auto;
         }
 
         .play-button {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            background: #ffd700;
-            color: #0a2a5e;
-            padding: 0.8rem 1.5rem;
+            gap: 0.8rem;
+            background: var(--accent-gold);
+            color: var(--primary-blue);
+            padding: 0.7rem 1.8rem;
             border-radius: 50px;
-            font-weight: 600;
+            font-weight: 700;
             text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25);
         }
 
         .play-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            transform: translateY(-2px) scale(1.05);
             background: #fff;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
         }
 
-        .play-button i {
-            font-size: 1.2rem;
-        }
-
-        /* Parallax Sections */
+        /* --- Backgrounds --- */
         .background {
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center center;
-            overflow: hidden;
-            will-change: transform;
-            backface-visibility: hidden;
             height: 100vh;
             width: 100%;
             position: absolute;
             top: 0;
             left: 0;
+            background-size: cover;
+            background-position: center;
+            will-change: transform;
             transition: transform 1.2s cubic-bezier(0.22, 0.44, 0, 1);
+            overflow: hidden;
         }
 
-        .background:before {
+        .background::before {
             content: "";
             position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background-color: rgba(0,0,0,0.3);
-        }
-
-        #home-bg {
-            background-color: #071f47;
-            transform: translateY(0);
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
             z-index: 1;
         }
 
-        #about-bg {
-            background: linear-gradient(135deg, #0a2a5e 0%, #071f47 100%);
-            transform: translateY(100vh);
-            z-index: 2;
+        #home-bg { background-color: var(--dark-blue); z-index: 1; }
+        
+        #about-bg { 
+            background: radial-gradient(circle at top right, #0f3d85 0%, #051636 70%);
+            z-index: 2; 
+        }
+        
+        #contact-bg { 
+            background: linear-gradient(to bottom, #0b1e3f, #000000);
+            z-index: 3; 
         }
 
-        #contact-bg {
-            background: linear-gradient(to bottom, #171d31, #000000);
-            transform: translateY(200vh);
-            z-index: 3;
+        /* --- Video Background --- */
+        .video-background {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            opacity: 0.7; /* Slightly darker video for text pop */
         }
 
+        .video-background video {
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(2px) brightness(0.9); /* Artistic blur */
+        }
+
+        /* --- Layout Wrapper --- */
         .content-wrapper {
-            height: 90vh;
+            height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            flex-flow: column nowrap;
-            color: #fff;
             position: relative;
             z-index: 10;
-            padding: 0 20px;
+            padding: 80px 5% 0; /* Account for fixed header */
         }
 
-        /* Home Section */
+        /* --- Typography Commons --- */
+        h1.main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        
+        h1.main-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--accent-gold);
+            margin: 1rem auto 0;
+        }
+
+        /* --- Home Section --- */
         .home-content {
-            max-width: 1200px;
-            margin: 0 auto;
+            text-align: center;
+            max-width: 1000px;
         }
 
         .home-content h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 4.5rem;
-            margin-bottom: 15px;
-            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            letter-spacing: 1.5px;
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+            background: linear-gradient(to bottom, #fff 40%, #ddd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .home-content p {
-            font-size: 1.8rem;
-            margin-bottom: 40px;
+            font-size: 1.5rem;
             font-weight: 300;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 3rem;
+            opacity: 0.9;
         }
 
-        /* Video Background */
-        .video-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .video-background video {
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            filter: blur(4px) brightness(0.8);
-        }
-
-        /* Play Button */
-        .play-btn {
+        .hero-btn {
             display: inline-block;
-            padding: 15px 45px;
-            color: #fff;
-            text-decoration: none;
-            font-size: 1.3rem;
+            padding: 1.2rem 3.5rem;
+            font-size: 1.1rem;
             font-weight: 600;
+            color: var(--dark-blue);
+            background: var(--accent-gold);
             border-radius: 50px;
-            transition: all 0.4s ease;
+            text-decoration: none;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            border: 2px solid #fff;
+            letter-spacing: 2px;
+            transition: var(--transition-smooth);
+            animation: pulse-gold 2s infinite;
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-5px);
+            background: #fff;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        /* --- About Section --- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem; /* Reduced gap slightly for space */
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 2rem;
+            /* Ensure it doesn't overflow vertically on smaller screens */
+            max-height: 75vh;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem; /* Slightly reduced padding */
+            box-shadow: var(--glass-shadow);
+            transition: var(--transition-smooth);
             position: relative;
             overflow: hidden;
-            z-index: 10;
-            backdrop-filter: blur(50px);
-            -webkit-backdrop-filter: blur(8px); /* Safari support */
-        }
-
-        .play-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: #0a2a5e;
-            transition: all 0.4s ease;
-            z-index: -1;
-        }
-
-        .play-btn:hover {
-            color: #fff;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            border: none;
-            background: rgba(240, 240, 240, 0.9); /* Less transparent on hover */
-        }
-
-        .play-btn:hover::before {
-            left: 0;
-        }
-
-        /* About Section */
-        .about-main-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 0px;
-            position: relative;
-            padding-top: 20px;
-            margin-top: 0;
-            width: 100%;
-        }
-
-        .about-main-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: #ffd700;
-        }
-
-        .about-content {
             display: flex;
             flex-direction: column;
-            gap: 30px;
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px;
         }
 
-        .mission-vision-columns {
-            display: flex;
-            gap: 30px;
-            width: 100%;
+        /* Allow scrolling inside card if text is very long on small screens */
+        .glass-card-content {
+            overflow-y: auto;
+            padding-right: 10px; /* Space for scrollbar */
         }
 
-        .mission, .vision {
-            flex: 1;
+        /* Custom scrollbar for inside cards */
+        .glass-card-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .glass-card-content::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.4s ease;
+        }
+        .glass-card-content::-webkit-scrollbar-thumb {
+            background: var(--accent-gold);
+            border-radius: 4px;
         }
 
-        .core-values {
-            background: rgba(255, 215, 0, 0.1);
-            padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            width: 100%;
-            margin-top: 0;
-        }
-
-        .mission:hover, .vision:hover {
-            transform: translateY(-10px);
-        }
-
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            margin-bottom: 25px;
-            color: #ffd700;
-            position: relative;
-            display: inline-block;
-        }
-
-        .section-title::after {
+        .glass-card::before {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background: #ffd700;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
         }
 
-        .mission h3, .vision h3 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #ffd700;
+        .glass-card:hover {
+            transform: translateY(-5px); /* Reduced hover movement */
+            border-color: rgba(255,215,0,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        .mission p, .vision p {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
+        .glass-card h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--accent-gold);
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
         }
 
-        .core-values {
-            background: rgba(255, 215, 0, 0.1);
-            padding: 30px;
-            border-radius: 10px;
+        .glass-card p {
+            font-size: 0.95rem; /* Optimized font size */
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 1rem;
+        }
+
+        .glass-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .core-values-banner {
+            grid-column: 1 / -1;
             text-align: center;
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 1.5rem; /* Smaller padding for banner */
         }
 
-        .core-values p {
-            font-size: 1.4rem;
+        .core-values-banner p {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
             font-style: italic;
+            color: var(--accent-gold);
+            margin: 0;
+        }
+
+        /* --- Contact Section --- */
+        .contact-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr; /* Info takes less space, map takes more */
+            gap: 3rem;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 2rem;
+            align-items: stretch;
+        }
+
+        .contact-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            transition: var(--transition-smooth);
+        }
+
+        .contact-row:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,215,0,0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+            flex-shrink: 0;
+        }
+
+        .contact-details h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 0.2rem;
+        }
+
+        .contact-details a, .contact-details p {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1rem;
             font-weight: 500;
         }
 
-        /* Contact Section */
-        .contact-main-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-            padding-top: 20px;
-            width: 100%;
+        .contact-details a:hover {
+            color: var(--accent-gold);
         }
 
-        .contact-main-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: #ffd700;
-        }
-
-        .contact-container {
-            display: flex;
-            gap: 50px;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            align-items: flex-start;
-            text-align: left;
-            padding: 20px;
-        }
-
-        .contact-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-
-        .contact-info {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: left;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 30px;
-        }
-
-        .contact-icon {
-            font-size: 1.2rem;
-            color: #ffd700;
-            margin-right: 20px;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        .contact-text {
-            flex: 1;
-        }
-
-        .contact-text h3 {
-            margin-bottom: 5px;
-            color: #ffd700;
-        }
-
-        .contact-text a {
-            color: #fff;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-block;
-            position: relative;
-        }
-
-        .contact-text a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #ffd700;
-            transition: width 0.3s ease;
-        }
-
-        .contact-text a:hover {
-            color: #ffd700;
-        }
-
-        .contact-text a:hover::after {
-            width: 100%;
-        }
-
-        .map-container {
-            flex: 1;
-            border-radius: 15px;
+        .map-frame {
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            height: 400px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            height: 100%;
+            min-height: 400px;
         }
 
-        .map-container iframe {
+        .map-frame iframe {
             width: 100%;
             height: 100%;
-            border: none;
+            filter: grayscale(20%) contrast(1.1); /* Better map integration */
         }
 
-        /* Parallax Elements */
-        .parallax-element {
-            position: absolute;
-            z-index: 1;
-            opacity: 0.2;
-        }
-
-        .circle {
-            border-radius: 50%;
-            background: #ffd700;
-        }
-
-        .square {
-            transform: rotate(45deg);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .triangle {
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-color: transparent transparent #ffd700 transparent;
-        }
-
-        /* Slide Indicator */
+        /* --- Indicators --- */
         .slide-indicator {
             position: fixed;
-            right: 30px;
+            right: 40px;
             top: 50%;
             transform: translateY(-50%);
             z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
         .indicator-dot {
-            display: block;
-            width: 12px;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            margin: 15px 0;
+            width: 4px;
+            height: 40px; /* Bars instead of dots */
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: var(--transition-smooth);
+            position: relative;
         }
 
         .indicator-dot.active {
-            background: #ffd700;
-            transform: scale(1.3);
+            background: var(--accent-gold);
+            height: 60px;
         }
 
-        /* About Section Mobile Styles */
-        .about-mobile-scroll {
-            display: none;
+        .indicator-dot::after {
+            content: ''; /* Hit area expansion */
+            position: absolute;
+            left: -20px; right: -20px; top: 0; bottom: 0;
         }
 
-        /* Responsive Design */
+        /* --- Mobile Styles --- */
+        .about-mobile-scroll { display: none; }
+
         @media (max-width: 992px) {
-            .contact-container {
-                flex-direction: column;
-            }
+            .home-content h1 { font-size: 3.5rem; }
+            .about-grid { grid-template-columns: 1fr; max-height: none; overflow: visible; }
+            .contact-wrapper { grid-template-columns: 1fr; }
+            .map-frame { min-height: 300px; }
             
-            .contact-info {
-                margin-bottom: 30px;
-            }
-            
-            .map-container {
-                width: 100%;
+            .about-grid .glass-card {
+                max-height: 400px; /* Limit height on tablet to prevent huge cards */
             }
         }
 
         @media (max-width: 768px) {
-            .about-main-title, .contact-main-title {
-                font-size: 2.5rem;
-                padding-top: 60px;
-            }
-
-            .main-header {
-                justify-content: center;
-                padding: 1rem;
-            }
+            .main-header { padding: 1rem; justify-content: center; flex-wrap: wrap; gap: 1rem; }
+            .nav-list { display: none; } /* Hide nav links on mobile for cleanliness */
+            .play-container { display: block; }
             
-            .logo-container{
-                align-items: center;
-            }
-
-            .main-nav, .play-container {
-                display: none ;
-            }
-
-            .school-logo-img {
-                height: 50px;
-            }
-
-            .nav-list {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 0.5rem 1rem;
-            }
+            .home-content h1 { font-size: 2.8rem; }
+            .home-content p { font-size: 1.1rem; }
             
-            .home-content h1 {
-                font-size: 2.8rem;
-            }
+            .slide-indicator { display: none; }
             
-            .home-content p {
-                font-size: 1.4rem;
-            }
+            .content-wrapper { padding: 120px 20px 20px; justify-content: flex-start; }
             
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .slide-indicator {
-                right: 15px;
-            }
-            
-            .play-container {
-                margin: 1rem 0 0;
-            }
-
-            /* About Section Mobile Styles */
-            .about-content {
-                display: none;
-            }
-
+            /* Mobile About */
+            .about-content { display: none; } /* Hide desktop grid */
             .about-mobile-scroll {
                 display: flex;
-                width: 100%;
-                height: 100%;
-                overflow-x: auto;
-                scroll-snap-type: x mandatory;
-                scroll-behavior: smooth;
-                -webkit-overflow-scrolling: touch;
+                flex-direction: column;
                 gap: 20px;
-                padding: 20px;
-            }
-
-            .mobile-about-item {
-                scroll-snap-align: center;
-                min-width: 90%;
-                height: 80%;
-                background: rgba(255, 255, 255, 0.05);
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(5px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                transition: transform 0.4s ease;
+                width: 100%;
                 overflow-y: auto;
-            }
-
-            .mobile-about-item h2 {
-                font-family: 'Playfair Display', serif;
-                font-size: 2rem;
-                margin-bottom: 20px;
-                color: #ffd700;
-            }
-
-            .mobile-about-item p {
-                font-size: 1rem;
-                margin-bottom: 15px;
-            }
-
-            .core-values-mobile {
-                background: rgba(255, 215, 0, 0.1);
-                padding: 20px;
-                border-radius: 10px;
-                text-align: center;
-                border: 1px solid rgba(255, 215, 0, 0.3);
-                margin-top: 20px;
-            }
-
-            .core-values-mobile p {
-                font-size: 1.2rem;
-                font-style: italic;
-                font-weight: 500;
-            }
-
-            /* Hide scrollbar but keep functionality */
-            .about-mobile-scroll::-webkit-scrollbar {
-                display: none;
-            }
-            .about-mobile-scroll {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .home-content h1 {
-                font-size: 2.2rem;
+                padding-bottom: 100px; /* Extra padding for scroll */
             }
             
-            .home-content p {
-                font-size: 1.2rem;
-            }
-
-            .school-logo-img {
-                height: 40px;
-            }
-
-            .play-btn {
-                padding: 12px 30px;
-                font-size: 1.1rem;
-            }
-            
-            .school-logo {
-                font-size: 1.4rem;
-            }
-            
-            .slide-indicator {
-                display: none;
-            }
-            
-            .play-button {
-                padding: 0.6rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            /* About Section Mobile Styles */
-            .mobile-about-item {
-                min-width: 85%;
-                padding: 25px;
-            }
-
-            .mobile-about-item h2 {
-                font-size: 1.8rem;
-            }
-
-            .mobile-about-item p {
-                font-size: 0.95rem;
-            }
-
-            .core-values-mobile p {
-                font-size: 1.1rem;
-            }
-
-            .contact-main-title {
-                font-size: 2.2rem;
-            }
-
-            .contact-info {
-                padding: 25px;
+            .about-mobile-scroll .glass-card {
+                padding: 2rem;
+                flex-shrink: 0; /* Prevent shrinking */
             }
         }
     </style>
 </head>
 <body>
-    <!-- Updated Header -->
+    <!-- Header -->
     <header class="main-header">
         <div class="logo-container">
-             <img src="dsdlogo.png" alt="Dominican School Dagupan Logo" class="school-logo-img">
+             <img src="dsdlogo.png" alt="Dominican School Logo">
         </div>
 
         <nav class="main-nav">
@@ -755,291 +559,228 @@
         <div class="play-container">
             <a href="virtualtour.html" class="play-button">
                 <i class="fas fa-gamepad"></i>
-                <span>Play</span>
+                <span>Play Tour</span>
             </a>
         </div>
     </header>
 
-    <!-- Slide Indicator -->
+    <!-- Indicators -->
     <div class="slide-indicator">
         <span class="indicator-dot active" data-slide="0"></span>
         <span class="indicator-dot" data-slide="1"></span>
         <span class="indicator-dot" data-slide="2"></span>
     </div>
 
-    <!-- Home Section -->
-    <div class="background" id="home-bg">
+    <!-- SECTION 1: HOME -->
+    <div class="background section-active" id="home-bg">
         <div class="video-background">
-            <video autoplay muted loop>
+            <video autoplay muted loop playsinline>
                 <source src="Dominicanschool.mp4" type="video/mp4">
-                Your browser does not support the video tag.
             </video>
         </div>
         
-        <!-- Parallax elements -->
-        <div class="parallax-element circle" style="width: 80px; height: 80px; top: 20%; left: 10%;"></div>
-        <div class="parallax-element square" style="width: 100px; height: 100px; top: 40%; right: 15%;"></div>
-        <div class="parallax-element triangle" style="border-width: 0 40px 70px 40px; top: 70%; left: 20%;"></div>
-        <div class="parallax-element circle" style="width: 60px; height: 60px; bottom: 15%; right: 20%;"></div>
-        
         <div class="content-wrapper">
             <div class="home-content">
-                <h1>Dominican School, Dagupan</h1>
-                <p>Greetings in our father, St. Dominic! </p>
-                <a href="virtualtour.html" class="play-btn">Play Game</a>
+                <h1 class="animate-on-scroll delay-1">Dominican School Dagupan</h1>
+                <p class="animate-on-scroll delay-2">Greetings in our father, St. Dominic! <br>Excellence in Character and Education.</p>
+                <a href="virtualtour.html" class="hero-btn animate-on-scroll delay-3">Start Experience</a>
             </div>
         </div>
     </div>
 
-    <!-- About Section -->
+    <!-- SECTION 2: ABOUT -->
     <div class="background" id="about-bg">
-        <h1 class="about-main-title">About Our School</h1>
         <div class="content-wrapper">
-            <!-- Desktop About Section -->
-            <div class="about-content">
-                <div class="mission-vision-columns">
-                    <div class="vision">
-                        <h2 class="section-title">Our Vision</h2>
-                        <p>We envision Dominican School, Dagupan as a evolving center of character formation and academic excellence that nurtures 
-                            Learners into becoming transformative leaders of global society, who are bearers 
-                            of TRUTH in the service of God, country and fellowmen.</p>
-                    </div>
-                    
-                    <div class="mission">
-                        <h2 class="section-title">Our Mission</h2>
-                        <p>As a Catholic, Filipino and Dominican School, we commit ourselves to nurture our Christ-like attitude, deepen our devotion 
-                            to the Blessed Mother, protect God's creation, participate in social transformation, bring the TRUTH wherever we go and live 
-                            the Dominican Spirit of STUDY, for the benefit of the society.</p>
-                        <p>To facilitate the internalization of the CRMSD Schools Core Values, the following statement can be used: WE, DOMINICANS bear 
-                            witness to the TRUTH in the SERVICE of GOD and His CREATION.</p>
+            <h1 class="main-title animate-on-scroll">About Our School</h1>
+            
+            <!-- Desktop Grid -->
+            <div class="about-grid about-content">
+                <div class="glass-card animate-on-scroll delay-1">
+                    <h2>Our Vision</h2>
+                    <div class="glass-card-content">
+                        <p>We envision Dominican School, Dagupan as a evolving center of character formation and academic excellence that nurtures Learners into becoming transformative leaders of global society, who are bearers of TRUTH in the service of God, country and fellowmen.</p>
                     </div>
                 </div>
                 
-                <div class="core-values">
-                    <p>"Veritas Et Excellentia."</p>
+                <div class="glass-card animate-on-scroll delay-2">
+                    <h2>Our Mission</h2>
+                    <div class="glass-card-content">
+                        <p>As a Catholic, Filipino and Dominican School, we commit ourselves to nurture our Christ-like attitude, deepen our devotion to the Blessed Mother, protect God's creation, participate in social transformation, bring the TRUTH wherever we go and live the Dominican Spirit of STUDY, for the benefit of the society.</p>
+                        <p>To facilitate the internalization of the CRMSD Schools Core Values, the following statement can be used: WE, DOMINICANS bear witness to the TRUTH in the SERVICE of GOD and His CREATION.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card core-values-banner animate-on-scroll delay-3">
+                    <p>"Veritas Et Excellentia"</p>
                 </div>
             </div>
 
-            <!-- Mobile About Section -->
+            <!-- Mobile Scroll View -->
             <div class="about-mobile-scroll">
-                <div class="mobile-about-item">
+                <div class="glass-card">
                     <h2>Our Vision</h2>
-                    <p>We envision Dominican School, Dagupan as a evolving center of character formation and academic excellence that nurtures 
-                        Learners into becoming transformative leaders of global society, who are bearers 
-                        of TRUTH in the service of God, country and fellowmen.</p>
-                    <div class="core-values-mobile">
-                        <p>"Veritas Et Excellentia."</p>
-                    </div>
+                    <p>We envision Dominican School, Dagupan as a evolving center of character formation and academic excellence that nurtures Learners into becoming transformative leaders of global society, who are bearers of TRUTH in the service of God, country and fellowmen.</p>
                 </div>
-                
-                <div class="mobile-about-item">
+                <div class="glass-card">
                     <h2>Our Mission</h2>
-                    <p>As a Catholic, Filipino and Dominican School, we commit ourselves to nurture our Christ-like attitude, deepen our devotion 
-                        to the Blessed Mother, protect God's creation, participate in social transformation, bring the TRUTH wherever we go and live 
-                        the Dominican Spirit of STUDY, for the benefit of the society.</p>
-                    <p>To facilitate the internalization of the CRMSD Schools Core Values, the following statement can be used: WE, DOMINICANS bear 
-                        witness to the TRUTH in the SERVICE of GOD and His CREATION.</p>
+                    <p>As a Catholic, Filipino and Dominican School, we commit ourselves to nurture our Christ-like attitude, deepen our devotion to the Blessed Mother, protect God's creation, participate in social transformation, bring the TRUTH wherever we go and live the Dominican Spirit of STUDY, for the benefit of the society.</p>
+                    <p>To facilitate the internalization of the CRMSD Schools Core Values, the following statement can be used: WE, DOMINICANS bear witness to the TRUTH in the SERVICE of GOD and His CREATION.</p>
+                </div>
+                <div class="glass-card core-values-banner">
+                    <p>"Veritas Et Excellentia"</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Contact Section -->
+    <!-- SECTION 3: CONTACT -->
     <div class="background" id="contact-bg">
-        <h1 class="contact-main-title">Contact Us</h1>
         <div class="content-wrapper">
-            <div class="contact-container">
-                <div class="contact-content">
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                            <div class="contact-text">
-                                <h3>Email</h3>
-                                <a href="mailto:dominicanschooldagupan1935@gmail.com">dominicanschooldagupan1935@gmail.com</a>
-                            </div>
+            <h1 class="main-title animate-on-scroll">Contact Us</h1>
+            
+            <div class="contact-wrapper">
+                <div class="glass-card contact-card animate-on-scroll delay-1">
+                    <div class="contact-row">
+                        <div class="icon-box"><i class="fas fa-envelope"></i></div>
+                        <div class="contact-details">
+                            <h3>Email Us</h3>
+                            <a href="mailto:dominicanschooldagupan1935@gmail.com">dominicanschooldagupan1935@gmail.com</a>
                         </div>
-                        
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fab fa-facebook"></i></div>
-                            <div class="contact-text">
-                                <h3>Facebook</h3>
-                                <a href="https://facebook.com/100064233124785" target="_blank">Dominican School Dagupan</a>
-                            </div>
+                    </div>
+
+                    <div class="contact-row">
+                        <div class="icon-box"><i class="fab fa-facebook"></i></div>
+                        <div class="contact-details">
+                            <h3>Follow Us</h3>
+                            <a href="https://facebook.com/100064233124785" target="_blank">Dominican School Dagupan</a>
                         </div>
-                        
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fas fa-phone"></i></div>
-                            <div class="contact-text">
-                                <h3>Telephone</h3>
-                                <a href="tel:+63755222435">(075) 522-2435</a>
-                            </div>
+                    </div>
+
+                    <div class="contact-row">
+                        <div class="icon-box"><i class="fas fa-phone"></i></div>
+                        <div class="contact-details">
+                            <h3>Call Us</h3>
+                            <a href="tel:+63755222435">(075) 522-2435</a>
                         </div>
-                        
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-                            <div class="contact-text">
-                                <h3>Address</h3>
-                                <p>294 Dagupan - Binmaley Rd, Dagupan City,</p>
-                                <p>2400 Pangasinan</p>
-                            </div>
+                    </div>
+
+                    <div class="contact-row">
+                        <div class="icon-box"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="contact-details">
+                            <h3>Visit Us</h3>
+                            <p>294 Dagupan - Binmaley Rd, Dagupan City</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.6336882241926!2d120.32851417578391!3d16.032573340416942!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33915d45693e9c57%3A0x59674223c9ab71c1!2sDominican%20School!5e0!3m2!1sen!2sph!4v1753089468373!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                <div class="map-frame animate-on-scroll delay-2">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.6336882241926!2d120.32851417578391!3d16.032573340416942!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33915d45693e9c57%3A0x59674223c9ab71c1!2sDominican%20School!5e0!3m2!1sen!2sph!4v1753089468373!5m2!1sen!2sph" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Parallax scroll effect implementation
+        // --- Utility ---
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            }
+        }
+
+        // --- State ---
         let currentSlide = 0;
         const totalSlides = 3;
         let scrolling = false;
         
-        // Get all background elements
+        // --- Elements ---
         const backgrounds = [
             document.getElementById('home-bg'),
             document.getElementById('about-bg'),
             document.getElementById('contact-bg')
         ];
-        
-        // Get all indicator dots
         const dots = document.querySelectorAll('.indicator-dot');
-        
-        // Get the header element
-        const header = document.querySelector('.main-header');
+        const navLinks = document.querySelectorAll('.nav-link');
 
-        // Add transition to header for smooth animation
-        header.style.transition = 'transform 0.5s ease';
-        
-        // Update slide positions
+        // --- Core Logic ---
         function updateSlidePositions() {
-            for (let i = 0; i < totalSlides; i++) {
+            backgrounds.forEach((bg, i) => {
+                // Handle Position
                 if (i < currentSlide) {
-                    backgrounds[i].style.transform = `translateY(-100vh)`;
+                    bg.style.transform = `translateY(-100vh)`;
+                    bg.classList.remove('section-active');
                 } else if (i > currentSlide) {
-                    backgrounds[i].style.transform = `translateY(${100 * (i - currentSlide)}vh)`;
+                    bg.style.transform = `translateY(${100 * (i - currentSlide)}vh)`;
+                    bg.classList.remove('section-active');
                 } else {
-                    backgrounds[i].style.transform = `translateY(0)`;
-                }
-            }
-            
-            // Update active dot
-            dots.forEach((dot, index) => {
-                if (index === currentSlide) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
+                    bg.style.transform = `translateY(0)`;
+                    // Small delay to trigger animations only after slide arrives
+                    setTimeout(() => bg.classList.add('section-active'), 300); 
                 }
             });
             
-            // Update active nav link
-            document.querySelectorAll('.nav-link').forEach((link, index) => {
-                if (index === currentSlide) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-
-            // Auto-hide header on sections 2 and 3 (About and Contact)
-            if (currentSlide === 0) {
-                header.style.transform = 'translateY(0)';
-            } else {
-                header.style.transform = 'translateY(-100%)';
-            }
+            // Update UI
+            dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
+            navLinks.forEach((link, index) => link.classList.toggle('active', index === currentSlide));
         }
         
-        // Scroll to a specific slide
         function scrollToSlide(slideIndex) {
             if (slideIndex < 0 || slideIndex >= totalSlides || scrolling) return;
-            
             scrolling = true;
             currentSlide = slideIndex;
             updateSlidePositions();
-            
-            // Reset scrolling flag after animation
-            setTimeout(() => {
-                scrolling = false;
-            }, 1200);
+            setTimeout(() => { scrolling = false; }, 1000);
         }
         
-        // Mouse wheel event handler
-        function handleWheel(e) {
+        // --- Event Listeners ---
+        
+        // Wheel / Trackpad
+        document.addEventListener('wheel', throttle((e) => {
             if (scrolling) return;
-            
-            // Normalize wheel delta
             const delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-            
-            if (delta < 0) {
-                // Scroll down
-                scrollToSlide(Math.min(currentSlide + 1, totalSlides - 1));
-            } else if (delta > 0) {
-                // Scroll up
-                scrollToSlide(Math.max(currentSlide - 1, 0));
-            }
-            
-            // Prevent default scrolling
+            if (delta < 0) scrollToSlide(Math.min(currentSlide + 1, totalSlides - 1));
+            else if (delta > 0) scrollToSlide(Math.max(currentSlide - 1, 0));
             e.preventDefault();
-        }
+        }, 1200), { passive: false });
         
-        // Add event listeners
-        document.addEventListener('wheel', _.throttle(handleWheel, 1000), { passive: false });
-        
-        // Navigation dot click events
+        // Click Nav
         dots.forEach(dot => {
             dot.addEventListener('click', function() {
-                const slideIndex = parseInt(this.getAttribute('data-slide'));
-                scrollToSlide(slideIndex);
+                scrollToSlide(parseInt(this.getAttribute('data-slide')));
             });
         });
         
-        // Nav link click events
-        document.querySelectorAll('.nav-link[data-slide]').forEach(link => {
+        navLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                const slideIndex = parseInt(this.getAttribute('data-slide'));
-                scrollToSlide(slideIndex);
+                scrollToSlide(parseInt(this.getAttribute('data-slide')));
             });
         });
         
-        // Touch events for mobile
+        // Touch Swipe
         let touchStartY = 0;
+        document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
         
-        document.addEventListener('touchstart', function(e) {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: true });
-        
-        document.addEventListener('touchend', function(e) {
+        document.addEventListener('touchend', e => {
             if (scrolling) return;
-            
             const touchEndY = e.changedTouches[0].clientY;
             const deltaY = touchStartY - touchEndY;
             
             if (Math.abs(deltaY) > 50) {
-                if (deltaY > 0) {
-                    // Swipe up
-                    scrollToSlide(Math.min(currentSlide + 1, totalSlides - 1));
-                } else {
-                    // Swipe down
-                    scrollToSlide(Math.max(currentSlide - 1, 0));
-                }
+                if (deltaY > 0) scrollToSlide(Math.min(currentSlide + 1, totalSlides - 1));
+                else scrollToSlide(Math.max(currentSlide - 1, 0));
             }
         }, { passive: true });
         
-        // Initialize the page
+        // Init
         updateSlidePositions();
-
-        // Mobile About Section Horizontal Scrolling
-        const aboutMobileScroll = document.querySelector('.about-mobile-scroll');
-        if (aboutMobileScroll) {
-            aboutMobileScroll.addEventListener('scroll', _.throttle(function() {
-                // You can add additional scroll handling here if needed
-            }, 100));
-        }
     </script>
 </body>
 </html>
