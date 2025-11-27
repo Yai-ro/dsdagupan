@@ -800,7 +800,7 @@
                 </p>
                 <!-- Play Button for Modal -->
                 <a href="#" class="hero-btn animate-on-scroll delay-3" id="watchHistoryBtn">
-                    <i class="fas fa-play"></i> Watch History Now
+                    <i class="fas fa-play"></i> Watch History
                 </a>
             </div>
         </div>
@@ -1117,9 +1117,9 @@
 
             virtualTourLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
-                    if (!isMobile) {
+                    if (isMobile) {
                         e.preventDefault();
-                        alert('The Virtual Tour is only available on mobile devices.');
+                        alert('The Virtual Tour is only available on desktop computers.');
                     }
                 });
             });
