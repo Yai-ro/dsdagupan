@@ -201,6 +201,7 @@
         .mobile-nav-overlay.active .mobile-nav-link:nth-child(2) { transition-delay: 0.2s; }
         .mobile-nav-overlay.active .mobile-nav-link:nth-child(3) { transition-delay: 0.3s; }
         .mobile-nav-overlay.active .mobile-nav-link:nth-child(4) { transition-delay: 0.4s; }
+        .mobile-nav-overlay.active .mobile-nav-link:nth-child(5) { transition-delay: 0.5s; }
 
         /* --- Backgrounds --- */
         .background {
@@ -225,7 +226,16 @@
 
         #home-bg { background-color: var(--dark-blue); z-index: 1; }
         #about-bg { background: radial-gradient(circle at top right, #0f3d85 0%, #051636 70%); z-index: 2; }
-        #contact-bg { background: linear-gradient(to bottom, #0b1e3f, #000000); z-index: 3; }
+        
+        /* New History Background - Gradient Fallback */
+        #history-bg { 
+            background: linear-gradient(135deg, rgba(30, 30, 36, 0.8) 0%, rgba(62, 62, 74, 0.8) 100%), url('files/Dominicanbghistory.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: 3; 
+        }
+
+        #contact-bg { background: linear-gradient(to bottom, #0b1e3f, #000000); z-index: 4; }
 
         .video-background {
             position: absolute;
@@ -242,6 +252,50 @@
             transform: translate(-50%, -50%);
             filter: blur(2px) brightness(0.9);
         }
+        
+        /* --- Video Modal Styles --- */
+        .video-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .video-modal-content {
+            width: 90%;
+            max-width: 1000px;
+            position: relative;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .video-modal-content video {
+            width: 100%;
+            display: block;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 2001;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
 
         /* --- Layout --- */
         .content-wrapper {
@@ -252,11 +306,8 @@
             align-items: center;
             position: relative;
             z-index: 10;
-            /* Default padding for Desktop/Tablet */
-            padding: 80px 5% 0; 
+            padding: 0 5%; 
         }
-
-        /* Removed min-width padding override to revert desktop padding */
 
         h1.main-title {
             font-family: 'Playfair Display', serif;
@@ -266,6 +317,7 @@
             text-shadow: 0 4px 10px rgba(0,0,0,0.5);
             position: relative;
             text-align: center;
+            margin-top: 2rem;
         }
         
         h1.main-title::after {
@@ -279,6 +331,10 @@
 
         /* --- Home --- */
         .home-content { text-align: center; max-width: 1000px; }
+
+        .history-content {
+            margin-top: 2rem;
+        }
 
         .home-content h1 {
             font-family: 'Playfair Display', serif;
@@ -313,6 +369,7 @@
             letter-spacing: 2px;
             transition: var(--transition-smooth);
             animation: pulse-gold 2s infinite;
+            cursor: pointer;
         }
 
         /* --- About Grid/Cards --- */
@@ -322,7 +379,6 @@
             gap: 1.5rem;
             width: 100%;
             max-width: 1200px;
-            margin-top: 2rem;
             max-height: 75vh;
         }
 
@@ -389,7 +445,6 @@
             gap: 3rem;
             width: 100%;
             max-width: 1200px;
-            margin-top: 2rem;
             align-items: stretch;
         }
 
@@ -481,17 +536,16 @@
             
             h1.main-title { 
                 font-size: 2.2rem;
-                margin-top: 0; 
-                margin-bottom: 15px; 
+                margin-top: 2rem; 
+                margin-bottom: 40px; /* Space between title and card */
                 flex-shrink: 0;
             }
             
             .slide-indicator { display: none; }
             
             .content-wrapper { 
-                /* Mobile Padding Applied Here: 20px on the sides, 120px top, 20px bottom */
-                padding: 120px 20px 20px; 
-                justify-content: flex-start; 
+                padding: 0 20px; 
+                justify-content: center; 
                 height: 100vh;
             }
 
@@ -500,14 +554,13 @@
                 padding: 0 20px; 
             }
             
-            /* --- Mobile Sliders Common (FIXED ALIGNMENT) --- */
-            .about-content, .contact-wrapper { display: none; } /* Hide desktop content */
+            /* --- Mobile Sliders Common --- */
+            .about-content, .contact-wrapper { display: none; } 
             
             .about-mobile-scroll, .contact-mobile-scroll {
                 display: flex;
                 flex-direction: row;
                 gap: 0;
-                /* Corrected: Use 100% width of the padded content-wrapper, removed negative margins */
                 width: 100%; 
                 margin-left: 0;
                 overflow-x: auto;
@@ -517,22 +570,15 @@
                 align-items: flex-start; 
                 -webkit-overflow-scrolling: touch;
                 margin-bottom: 20px;
-                
-                /* Removed: padding-left and padding-right to let content-wrapper padding handle edges */
             }
 
             .about-mobile-scroll::-webkit-scrollbar, .contact-mobile-scroll::-webkit-scrollbar { display: none; }
             
             .glass-card-mobile {
-                scroll-snap-align: start; /* Snap to the start of the item */
-                
-                /* Card width calculation: 100% of the scroll container minus the gap (20px) */
+                scroll-snap-align: start; 
                 width: calc(100% - 20px); 
                 min-width: calc(100% - 20px); 
-
-                /* Space between cards */
                 margin-right: 20px; 
-                
                 height: auto;
                 max-height: 45vh; 
                 flex-shrink: 0;
@@ -547,7 +593,6 @@
                 flex-direction: column;
             }
             
-            /* Last card correction for snap (takes full width, no margin-right) */
             .glass-card-mobile:last-child {
                 margin-right: 0; 
                 width: 100%;
@@ -563,11 +608,8 @@
                 border-bottom: 1px solid rgba(255,255,255,0.1);
             }
             
-            .glass-card-mobile p { /* Ensuring text is legible on mobile */
-                font-size: 0.9rem;
-            }
+            .glass-card-mobile p { font-size: 0.9rem; }
 
-            /* --- Pagination Dots --- */
             .mobile-pagination {
                 display: flex;
                 justify-content: center;
@@ -576,8 +618,7 @@
             }
 
             .mobile-dot {
-                width: 8px;
-                height: 8px;
+                width: 8px; height: 8px;
                 border-radius: 50%;
                 background: rgba(255,255,255,0.2);
                 transition: all 0.3s ease;
@@ -585,16 +626,15 @@
 
             .mobile-dot.active {
                 background: var(--accent-gold);
-                width: 24px; /* Elongated active dot */
-                border-radius: 4px;
+                width: 24px; border-radius: 4px;
             }
 
-            /* --- Static Text Below About --- */
             .mobile-veritas-text {
                 display: block;
                 text-align: center;
-                margin-top: auto;
-                padding-bottom: 20px;
+                margin-top: 20px; /* Replaces margin-top: auto to allow vertical centering */
+                background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px;
+                padding: 15px;
             }
 
             .mobile-veritas-text p {
@@ -605,14 +645,13 @@
                 margin: 0;
             }
 
-            /* --- Contact Specifics --- */
             .mobile-maps-btn {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 0.5rem;
                 width: 100%;
-                background: #4285F4; /* Google Maps Blue */
+                background: #4285F4;
                 color: white;
                 padding: 1rem;
                 border-radius: 12px;
@@ -625,10 +664,10 @@
 
             .mobile-maps-btn:active { transform: scale(0.98); }
 
-            /* Ensure consistent height for visual balance */
-            .about-mobile-scroll .glass-card-mobile,
-            .contact-mobile-scroll .glass-card-mobile {
-                height: 45vh;
+            /* Fix Email Size on Mobile */
+            .contact-details a {
+                font-size: 0.85rem;
+                word-break: break-all;
             }
         }
     </style>
@@ -637,7 +676,7 @@
     <!-- Header -->
     <header class="main-header">
         <div class="logo-container">
-             <img src="dsdlogo.png" alt="Dominican School Logo">
+             <img src="/files/dsdlogo.png" alt="Dominican School Logo">
         </div>
 
         <!-- Desktop Nav -->
@@ -645,7 +684,8 @@
             <ul class="nav-list">
                 <li><a class="nav-link active" data-slide="0">Home</a></li>
                 <li><a class="nav-link" data-slide="1">About</a></li>
-                <li><a class="nav-link" data-slide="2">Contact</a></li>
+                <li><a class="nav-link" data-slide="2">History</a></li>
+                <li><a class="nav-link" data-slide="3">Contact</a></li>
             </ul>
         </nav>
 
@@ -655,7 +695,7 @@
         </div>
 
         <div class="play-container">
-            <a href="virtualtour.html" class="play-button">
+            <a href="virtualtour.html" class="play-button virtual-tour-link">
                 <i class="fas fa-gamepad"></i>
                 <span>Play Tour</span>
             </a>
@@ -666,8 +706,9 @@
     <div class="mobile-nav-overlay">
         <a class="mobile-nav-link" data-slide="0">Home</a>
         <a class="mobile-nav-link" data-slide="1">About</a>
-        <a class="mobile-nav-link" data-slide="2">Contact</a>
-        <a href="virtualtour.html" class="mobile-nav-link" style="color: var(--accent-gold); font-size: 1.5rem; margin-top: 1rem;"><i class="fas fa-gamepad"></i> Play Tour</a>
+        <a class="mobile-nav-link" data-slide="2">History</a>
+        <a class="mobile-nav-link" data-slide="3">Contact</a>
+        <a href="virtualtour.html" class="mobile-nav-link virtual-tour-link" style="color: var(--accent-gold); font-size: 1.5rem; margin-top: 1rem;"><i class="fas fa-gamepad"></i> Play Tour</a>
     </div>
 
     <!-- Indicators -->
@@ -675,13 +716,14 @@
         <span class="indicator-dot active" data-slide="0"></span>
         <span class="indicator-dot" data-slide="1"></span>
         <span class="indicator-dot" data-slide="2"></span>
+        <span class="indicator-dot" data-slide="3"></span>
     </div>
 
-    <!-- SECTION 1: HOME -->
+    <!-- SECTION 1: HOME (Index 0) -->
     <div class="background section-active" id="home-bg">
         <div class="video-background">
-            <video autoplay muted loop playsinline>
-                <source src="Dominicanschool.mp4" type="video/mp4">
+            <video autoplay muted loop playsinline id="homeVideo">
+                <source src="/files/Dominicanschool.mp4" type="video/mp4">
             </video>
         </div>
         
@@ -689,14 +731,14 @@
             <div class="home-content">
                 <h1 class="animate-on-scroll delay-1">Dominican School Dagupan</h1>
                 <p class="animate-on-scroll delay-2">Greetings in our father, St. Dominic! <br>Excellence in Character and Education.</p>
-                <a href="virtualtour.html" class="hero-btn animate-on-scroll delay-3">Start Experience</a>
+                <a href="virtualtour.html" class="hero-btn animate-on-scroll delay-3 virtual-tour-link">Start Experience</a>
             </div>
         </div>
     </div>
 
-    <!-- SECTION 2: ABOUT -->
+    <!-- SECTION 2: ABOUT (Index 1) -->
     <div class="background" id="about-bg">
-        <div class="content-wrapper">
+        <div class="content-wrapper" style="display: flex; flex-direction: column; justify-content: center;">
             <h1 class="main-title animate-on-scroll">About Our School</h1>
             
             <!-- Desktop Grid -->
@@ -723,14 +765,12 @@
 
             <!-- Mobile Slider View -->
             <div class="about-mobile-scroll" id="aboutSlider">
-                <!-- Slide 1: Vision -->
                 <div class="glass-card-mobile">
                     <h2>Our Vision</h2>
                     <div class="glass-card-content">
                         <p>We envision Dominican School, Dagupan as a evolving center of character formation and academic excellence that nurtures Learners into becoming transformative leaders of global society, who are bearers of TRUTH in the service of God, country and fellowmen.</p>
                     </div>
                 </div>
-                <!-- Slide 2: Mission -->
                 <div class="glass-card-mobile">
                     <h2>Our Mission</h2>
                     <div class="glass-card-content">
@@ -739,20 +779,34 @@
                 </div>
             </div>
 
-            <!-- Mobile Pagination Dots (About) -->
             <div class="mobile-pagination" id="aboutDots">
                 <div class="mobile-dot active"></div>
                 <div class="mobile-dot"></div>
             </div>
 
-            <!-- Static Veritas Text -->
             <div class="mobile-veritas-text">
                 <p>"Veritas Et Excellentia"</p>
             </div>
         </div>
     </div>
 
-    <!-- SECTION 3: CONTACT -->
+    <!-- SECTION 3: HISTORY (Index 2) -->
+    <div class="background" id="history-bg">
+        <div class="content-wrapper">
+            <div class="home-content history-content">
+                <h1 class="main-title animate-on-scroll delay-1" style="color: #fff; text-shadow: 0 4px 10px rgba(0,0,0,0.8);">Our History</h1>
+                <p class="animate-on-scroll delay-2" style="max-width: 800px; margin: 0 auto; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin-bottom: 40px;">
+                    Discover the rich legacy of Dominican School Dagupan, spanning decades of academic excellence and spiritual formation.
+                </p>
+                <!-- Play Button for Modal -->
+                <a href="#" class="hero-btn animate-on-scroll delay-3" id="watchHistoryBtn">
+                    <i class="fas fa-play"></i> Watch History Now
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 4: CONTACT (Index 3) -->
     <div class="background" id="contact-bg">
         <div class="content-wrapper">
             <h1 class="main-title animate-on-scroll">Contact Us</h1>
@@ -800,7 +854,6 @@
 
             <!-- Mobile Contact Slider -->
             <div class="contact-mobile-scroll" id="contactSlider">
-                <!-- Slide 1: Contact Methods -->
                 <div class="glass-card-mobile">
                     <h2>Get in Touch</h2>
                     <div class="contact-row">
@@ -826,7 +879,6 @@
                     </div>
                 </div>
                 
-                <!-- Slide 2: Location & Maps -->
                 <div class="glass-card-mobile">
                     <h2>Visit Us</h2>
                     <div class="contact-row">
@@ -836,19 +888,28 @@
                             <p>294 Dagupan - Binmaley Rd, Dagupan City, 2400 Pangasinan</p>
                         </div>
                     </div>
-                    <!-- Google Maps App Button -->
                     <a href="https://www.google.com/maps/search/?api=1&query=Dominican+School+Dagupan" target="_blank" class="mobile-maps-btn">
                         <i class="fas fa-location-arrow"></i> Open in Google Maps
                     </a>
                 </div>
             </div>
 
-            <!-- Mobile Pagination Dots (Contact) -->
             <div class="mobile-pagination" id="contactDots">
                 <div class="mobile-dot active"></div>
                 <div class="mobile-dot"></div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div class="video-modal-overlay" id="videoModal">
+        <div class="close-modal" id="closeModal">&times;</div>
+        <div class="video-modal-content">
+            <video controls id="historyVideo">
+                <source src="/files/Dominicanhistory.mp4" type="video/mp4">
+                Your browser does not support video playback.
+            </video>
         </div>
     </div>
 
@@ -869,13 +930,14 @@
 
         // --- State ---
         let currentSlide = 0;
-        const totalSlides = 3;
+        const totalSlides = 4; // Updated for History section
         let scrolling = false;
         
         // --- Elements ---
         const backgrounds = [
             document.getElementById('home-bg'),
             document.getElementById('about-bg'),
+            document.getElementById('history-bg'),
             document.getElementById('contact-bg')
         ];
         const dots = document.querySelectorAll('.indicator-dot');
@@ -883,6 +945,45 @@
         const mobileLinks = document.querySelectorAll('.mobile-nav-link');
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
         const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
+
+        // --- Video Modal Logic ---
+        const watchHistoryBtn = document.getElementById('watchHistoryBtn');
+        const videoModal = document.getElementById('videoModal');
+        const closeModal = document.getElementById('closeModal');
+        const historyVideo = document.getElementById('historyVideo');
+
+        // Ensure home video plays
+        const homeVideo = document.getElementById('homeVideo');
+        if (homeVideo) {
+            homeVideo.play().catch(error => {
+                console.log("Autoplay was prevented for home video:", error);
+            });
+        }
+
+        if (watchHistoryBtn) {
+            watchHistoryBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                videoModal.classList.add('active');
+                historyVideo.play();
+            });
+        }
+
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                videoModal.classList.remove('active');
+                historyVideo.pause();
+                historyVideo.currentTime = 0;
+            });
+        }
+
+        // Close modal when clicking outside content
+        videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal) {
+                videoModal.classList.remove('active');
+                historyVideo.pause();
+                historyVideo.currentTime = 0;
+            }
+        });
 
         // --- Mobile Menu Logic ---
         mobileMenuBtn.addEventListener('click', () => {
@@ -909,22 +1010,28 @@
             const cardElement = slider.querySelector('.glass-card-mobile');
             if (!cardElement) return;
 
-            // Use the actual width including margin for accurate snapping
-            // cardWidth + margin-right (20px)
-            const snapDistance = cardElement.offsetWidth + 20; 
-
-            slider.addEventListener('scroll', throttle(() => {
+            // Updated Calculation Logic for better precision
+            const updateDots = () => {
                 const scrollLeft = slider.scrollLeft;
-                // Calculate which index is currently snapped based on scroll position / card width
+                const cardWidth = cardElement.offsetWidth;
+                const margin = 20; // The right margin we set in CSS
+                const snapDistance = cardWidth + margin;
+                
+                // Use rounding to find the nearest card index
                 const index = Math.round(scrollLeft / snapDistance);
                 
                 dots.forEach((dot, i) => {
                     dot.classList.toggle('active', i === index);
                 });
-            }, 100));
+            };
+
+            slider.addEventListener('scroll', throttle(updateDots, 100));
+            // Run once on load to ensure correct state
+            updateDots();
+            // Update on resize in case width changes
+            window.addEventListener('resize', updateDots);
         }
 
-        // Delay setup slightly to ensure card styles are applied before measuring
         window.addEventListener('load', () => {
             setupMobileSlider('aboutSlider', 'aboutDots');
             setupMobileSlider('contactSlider', 'contactDots');
@@ -961,6 +1068,8 @@
         // --- Event Listeners ---
         document.addEventListener('wheel', throttle((e) => {
             if (scrolling) return;
+            if (videoModal.classList.contains('active')) return; // Disable scroll when modal is open
+
             const delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
             if (delta < 0) scrollToSlide(Math.min(currentSlide + 1, totalSlides - 1));
             else if (delta > 0) scrollToSlide(Math.max(currentSlide - 1, 0));
@@ -985,7 +1094,8 @@
         
         document.addEventListener('touchend', e => {
             if (scrolling) return;
-            // Allow scrolling inside the card content itself
+            if (videoModal.classList.contains('active')) return;
+            
             if (e.target.closest('.glass-card-content') || e.target.closest('.about-mobile-scroll') || e.target.closest('.contact-mobile-scroll')) return;
 
             const touchEndY = e.changedTouches[0].clientY;
@@ -999,6 +1109,21 @@
         
         // Init
         updateSlidePositions();
+
+        // --- Virtual Tour Mobile Restriction ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const virtualTourLinks = document.querySelectorAll('.virtual-tour-link');
+
+            virtualTourLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (!isMobile) {
+                        e.preventDefault();
+                        alert('The Virtual Tour is only available on mobile devices.');
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
