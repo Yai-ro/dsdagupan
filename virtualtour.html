@@ -3,24 +3,24 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | My project</title>
+    <title>Unity Web Player | Virtual Tour</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <!-- Note: CSS is embedded below to ensure responsiveness without external dependencies breaking layout -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Fonts for Modern Look -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-      /* General Reset */
+      /* --- General Reset --- */
       body, html {
           margin: 0;
           padding: 0;
           height: 100%;
           width: 100%;
-          overflow: hidden; /* Prevent scrolling */
+          overflow: hidden;
           font-family: 'Montserrat', sans-serif;
           background-color: #000;
       }
 
-      /* --- 1. Unity Container Positioning (Full Viewport) --- */
+      /* --- Unity Container --- */
       #unity-container {
           position: absolute;
           width: 100%;
@@ -32,118 +32,124 @@
           overflow: hidden;
       }
 
-      /* Canvas will be sized by JavaScript to maintain aspect ratio */
       #unity-canvas {
           background: #231F20;
-          /* No fixed width/height here, rely on JS for responsive sizing */
+          outline: none;
       }
 
-      /* --- 2. Enhanced Loading Bar and Text Styles --- */
-      #unity-loading-bar {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          width: 300px;
-          height: 30px;
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 15px;
-          overflow: hidden;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-          display: block; 
-          padding: 0;
-          z-index: 10;
-      }
-
-      #unity-progress-bar-empty {
-          width: 100%;
-          height: 100%;
-          background: transparent;
-          position: relative;
-      }
-
-      #unity-progress-bar-full {
-          width: 0%;
-          height: 100%;
-          background: #ffd700; /* Gold/Yellow */
-          transition: width 0.3s ease;
+      /* --- Modern Loading Screen Overlay --- */
+      #loading-cover {
           position: absolute;
           top: 0;
           left: 0;
-          border-radius: 15px;
+          width: 100%;
+          height: 100%;
+          background: #1a1a1a; /* Dark sleek background */
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          z-index: 999; /* Stays on top of canvas */
+          transition: opacity 0.5s ease;
       }
-      
-      /* Text element is now inside the loading bar, centered over the progress */
+
+      /* Logo Styling */
+      .school-logo {
+          max-width: 250px; /* Adjust size as needed */
+          height: auto;
+          margin-bottom: 30px; /* Space between logo and bar */
+          filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+      }
+
+      /* Progress Bar Container */
+      .progress-container {
+          width: 300px;
+          height: 6px; /* Sleek thin line */
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 4px;
+          overflow: hidden;
+          position: relative;
+      }
+
+      /* The Moving Fill */
+      #unity-progress-bar-full {
+          width: 0%;
+          height: 100%;
+          background: #3498db; /* Modern Blue - change to school color if needed (e.g., #ffd700 for gold) */
+          box-shadow: 0 0 10px rgba(52, 152, 219, 0.7); /* Glow effect */
+          transition: width 0.2s ease;
+      }
+
+      /* Loading Text */
       #unity-progress-text {
-          position: absolute; 
-          color: #051636; /* Dark Blue text for visibility over the gold bar */
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-shadow: 0 0 1px rgba(255, 255, 255, 0.3);
-          z-index: 20;
-          /* Center the text within the loading bar */
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          white-space: nowrap;
+          margin-top: 15px;
+          color: #ffffff;
+          font-size: 0.9rem;
+          font-weight: 500;
+          letter-spacing: 1px;
+          text-transform: uppercase;
       }
-      
-      /* Warning Banner Style */
+
+      /* Warning Banner */
       #unity-warning {
           position: absolute;
-          top: 10px;
-          left: 10px;
-          z-index: 100;
-          font-size: 0.9rem;
-          color: #f0f0f0;
+          bottom: 10px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 1000;
+          background: rgba(0,0,0,0.7);
+          padding: 10px;
+          border-radius: 5px;
+          display: none; /* Hidden by default */
       }
     </style>
   </head>
   <body>
-    <!-- Main Unity Container (Now fills the whole screen) -->
+    
     <div id="unity-container">
-      <!-- The canvas where the game renders -->
-      <canvas id="unity-canvas" width="1280" height="720" tabindex="-1"></canvas>
+      <!-- The Canvas -->
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
       
-      <!-- Loading Bar -->
-      <div id="unity-loading-bar">
-          <div id="unity-progress-bar-empty">
+      <!-- Modern Loading Overlay -->
+      <div id="loading-cover">
+          <!-- Logo Input -->
+          <img src="/files/dsdlogo.png" alt="School Logo" class="school-logo" onerror="this.style.display='none'">
+          
+          <!-- Progress Bar -->
+          <div class="progress-container">
               <div id="unity-progress-bar-full"></div>
-              <!-- Progress text element centered over the bar -->
-              <span id="unity-progress-text">Loading... 0%</span>
           </div>
+          
+          <!-- Text -->
+          <div id="unity-progress-text">Loading Experience... 0%</div>
       </div>
 
-      <!-- Warning Banner (Kept for Unity functionality) -->
       <div id="unity-warning"></div>
     </div>
 
     <script>
-      // Service Worker registration removed to prevent "URL protocol not supported" errors in preview environments
-      
       // --- Element References ---
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
+      var loadingCover = document.querySelector("#loading-cover");
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var progressText = document.querySelector("#unity-progress-text"); // Added reference
+      var progressText = document.querySelector("#unity-progress-text");
       var warningBanner = document.querySelector("#unity-warning");
 
-      // Define the target aspect ratio (1280 / 720 = 1.777...)
+      // Aspect Ratio Logic (16:9)
       const ASPECT_RATIO = 1280 / 720; 
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
+      // Banner for Unity Errors
       function unityShowBanner(msg, type) {
         function updateBannerVisibility() {
           warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
         }
         var div = document.createElement('div');
         div.innerHTML = msg;
+        div.style.color = type === 'error' ? '#ff5555' : '#ffff55'; // Red for error, yellow for warning
         warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px; color: black;';
+        
+        if (type !== 'error') {
           setTimeout(function() {
             warningBanner.removeChild(div);
             updateBannerVisibility();
@@ -153,8 +159,7 @@
       }
 
       var buildUrl = "Build";
-      // CACHE BUSTING VERSION - Change this value (e.g., "?v=1.1") when you update the game
-      var buildVersion = "?v=1.1.2"; 
+      var buildVersion = "?v=1.2.0"; 
 
       var loaderUrl = buildUrl + "/Capstone 2 Web.loader.js" + buildVersion;
       var config = {
@@ -169,10 +174,7 @@
         showBanner: unityShowBanner,
       };
 
-      /**
-       * Calculates and sets the canvas size to maintain the ASPECT_RATIO
-       * (16:9) within the container, preventing stretching.
-       */
+      // Responsive Canvas Sizing
       function resizeCanvas() {
         const containerWidth = container.offsetWidth;
         const containerHeight = container.offsetHeight;
@@ -181,11 +183,9 @@
         let newWidth, newHeight;
 
         if (currentRatio > ASPECT_RATIO) {
-          // Window is wider than the game aspect ratio (height is the limiting factor)
           newHeight = containerHeight;
           newWidth = containerHeight * ASPECT_RATIO;
         } else {
-          // Window is taller than the game aspect ratio (width is the limiting factor)
           newWidth = containerWidth;
           newHeight = containerWidth / ASPECT_RATIO;
         }
@@ -194,11 +194,10 @@
         canvas.style.height = newHeight + "px";
       }
 
-      // Initial resizing
       resizeCanvas();
-      // Add event listener to resize canvas when window is resized
       window.addEventListener('resize', resizeCanvas);
 
+      // Mobile Viewport Fix
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         var meta = document.createElement('meta');
         meta.name = 'viewport';
@@ -206,24 +205,24 @@
         document.getElementsByTagName('head')[0].appendChild(meta);
       }
 
-      loadingBar.style.display = "block";
-
+      // Load Unity
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-          // Update progress bar width
+          // Update visual progress
           const percentage = Math.round(progress * 100);
           progressBarFull.style.width = percentage + "%";
-          // Update loading text
-          if(progressText) progressText.textContent = `Loading... ${percentage}%`;
+          progressText.textContent = `Loading... ${percentage}%`;
         }).then((unityInstance) => {
-          loadingBar.style.display = "none";
+          // Fade out loading screen when done
+          loadingCover.style.opacity = "0";
+          setTimeout(() => {
+            loadingCover.style.display = "none";
+          }, 500); // Wait for fade out transition
         }).catch((message) => {
-          // Use console error instead of alert
           console.error(message);
-          // Show error on loading bar if possible
-          if(loadingBar) loadingBar.innerHTML = `<span style="color:red; font-size:0.8rem; padding: 5px;">Error loading tour. Check console.</span>`;
+          progressText.innerHTML = `<span style="color:#ff5555;">Error loading tour. Check console.</span>`;
         });
       };
       document.body.appendChild(script);
