@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance - Merry Christmas!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Reverted to the original dark blue gradient */
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .font-holiday {
+            font-family: 'Mountains of Christmas', cursive;
+        }
+
+        /* Snow Animation */
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.8);
+            animation: fall linear forwards;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh);
+            }
+        }
+
+        /* Glass card styles REMOVED. 
+           Text now sits directly on background. */
+        
+        /* Golden Text Gradient for Header */
+        .text-gold-gradient {
+            background: linear-gradient(to right, #fcd34d, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Ornament Swing Animation */
+        .swing {
+            animation: swing 3s ease-in-out infinite alternate;
+            transform-origin: top center;
+        }
+
+        @keyframes swing {
+            0% { transform: rotate(3deg); }
+            100% { transform: rotate(-3deg); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center relative text-white selection:bg-yellow-500 selection:text-black">
+
+    <!-- Snow Container -->
+    <div id="snow-container" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
+
+    <!-- Decorative Top Ornaments -->
+    <div class="absolute top-0 w-full flex justify-center space-x-16 sm:space-x-32 pointer-events-none z-10">
+        <!-- The "Cherry" (Red Ball) -->
+        <div class="swing relative">
+            <div class="h-24 w-[1px] bg-gray-500 mx-auto"></div>
+            <svg class="w-20 h-20 -mt-1 text-red-600 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="15" cy="9" r="2.5" fill="rgba(255,255,255,0.3)"/>
+                <path d="M12 2a1 1 0 0 1 1 1v1a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1z" fill="#9ca3af"/>
+            </svg>
+        </div>
+        
+        <!-- Gold Ball -->
+        <div class="swing relative" style="animation-delay: 1.2s; animation-duration: 3.5s;">
+            <div class="h-36 w-[1px] bg-gray-500 mx-auto"></div>
+            <svg class="w-16 h-16 -mt-1 text-yellow-500 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M7 12c0-2.5 2-5 5-5s5 2.5 5 5-2 5-5 5-5-2.5-5-5z" fill="rgba(255,255,255,0.15)"/>
+                <path d="M12 2a1 1 0 0 1 1 1v1a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1z" fill="#9ca3af"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Main Content - No Card Background -->
+    <main class="relative z-30 px-6 w-full max-w-2xl text-center mt-12">
+        <!-- Removed glass-card class and padding borders -->
+        <div class="p-4"> 
+            
+            <!-- Main Title -->
+            <div class="space-y-2 mb-10">
+                <h1 class="font-holiday text-5xl md:text-8xl text-white drop-shadow-lg tracking-wide">
+                    Merry <span class="text-red-500">Christmas</span>
+                </h1>
+                <h2 class="font-holiday text-3xl md:text-5xl text-gold-gradient drop-shadow-md">
+                    & Happy New Year
+                </h2>
+            </div>
+
+            <!-- Maintenance Message -->
+            <div class="space-y-8">
+                <p class="text-gray-200 text-xl md:text-2xl leading-relaxed font-light">
+                    We are currently sweeping up the snowflakes.<br>
+                    The website is <span class="text-white font-semibold border-b border-yellow-500/50 pb-0.5">under maintenance</span>.
+                </p>
+                
+                <!-- Date Badge - Simplified -->
+                <div class="inline-flex items-center justify-center mt-4">
+                    <p class="text-base md:text-lg font-medium text-gray-300 tracking-wide uppercase">
+                        Returning in <span class="text-yellow-400 font-bold text-2xl ml-2">2026</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Simple Footer -->
+            <footer class="mt-16 text-sm text-gray-500/80 uppercase tracking-widest font-semibold">
+                Thanks for visiting
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        // Snow Effect Logic
+        function createSnowflake() {
+            const snowContainer = document.getElementById('snow-container');
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            
+            const symbols = ['❄', '❅', '❆', '•'];
+            snowflake.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.animationDuration = Math.random() * 5 + 3 + 's';
+            snowflake.style.opacity = Math.random() * 0.5 + 0.3;
+            snowflake.style.fontSize = Math.random() * 12 + 8 + 'px';
+            
+            snowContainer.appendChild(snowflake);
+
+            setTimeout(() => {
+                snowflake.remove();
+            }, 8000);
+        }
+
+        setInterval(createSnowflake, 150);
+    </script>
+</body>
+</html>
